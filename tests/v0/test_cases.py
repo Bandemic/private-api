@@ -5,5 +5,5 @@ import json
 
 def test_insert(client):
     # TODO: actually test that case is inserted
-    res = client.post(url_for("v0.cases.report_case"))
+    res = client.post(url_for("v0.cases.report"))
     assert res.status_code == 501
