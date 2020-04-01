@@ -24,9 +24,9 @@ def insert_contact() -> None:
 
 def random_time_in_the_past() -> datetime:
     # FIXME: use a cryptographically secure RNG
-    now = datetime.now()
-    one_day_ago = now - timedelta(days=1)
-    noise_minutes = randrange(start=0, stop=60 * 24 * 6, step=1)
+    now: datetime = datetime.now()
+    one_day_ago: datetime = now - timedelta(days=1)
+    noise_minutes: int = randrange(start=0, stop=60 * 24 * 6, step=1)
     # anything between 1 and 7 days ago
     return one_day_ago - timedelta(minutes=noise_minutes)
 
@@ -45,7 +45,7 @@ def insert_random_cases(n: int) -> None:
 
 
 def generate_random_cases(n: int) -> list:
-    cases = []
+    cases: list = []
     for _ in repeat(None, n):
         cases.append(
             {

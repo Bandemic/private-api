@@ -7,7 +7,7 @@ cases = Blueprint("v0.cases", __name__, url_prefix="/v0/cases")
 
 
 @cases.route("/report", methods=["POST"])
-def report():
+def report() -> Response:
     # TODO: check that user's infection has been verified
     if not (current_app.config["DEBUG"] or current_app.config["TESTING"]):
         return ApiError(501, "only available in dev and testing for now").as_response()
