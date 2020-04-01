@@ -7,19 +7,15 @@ from random import randrange, uniform
 import time
 from itertools import repeat
 
-db = mongo = PyMongo()
+mongo = PyMongo()
 
 
-def insert_case(uuid: UUID, lat: int = None, lon: int = None) -> None:
-    mongo.db.cases.insert(
-        {
-            "uuid": uuid,
-            "trust_level": 0,
-            "upload_timestamp": datetime.now(),
-            "lat": round(uniform(-90, 90), 1),
-            "lon": round(uniform(-180, 180), 1),
-        }
-    )
+def insert_cases(cases: list) -> None:
+    mongo.db.cases.insert_many(cases)
+
+
+def count_cases() -> int:
+    return mongo.db.cases.count_documents({})
 
 
 def insert_contact() -> None:
@@ -46,3 +42,18 @@ def insert_random_cases(n: int) -> None:
                 "lon": round(uniform(-180, 180), 1),
             }
         )
+
+
+def generate_random_cases(n: int) -> list:
+    cases = []
+    for _ in repeat(None, n):
+        cases.append(
+            {
+                "uuid": uuid4(),
+                "trust_level": 1,
+                "upload_timestamp": random_time_in_the_past(),
+                "lat": round(uniform(-90, 90), 1),
+                "lon": round(uniform(-180, 180), 1),
+            }
+        )
+    return cases
