@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_pymongo import PyMongo  # type: ignore
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, Iterator
+from typing import Optional, Dict, Any, Iterator, List
 from uuid import uuid4, UUID
 from random import randrange, uniform
 import time
@@ -10,12 +10,12 @@ from itertools import repeat
 mongo = PyMongo()
 
 
-def insert_cases(cases: list) -> None:
+def insert_cases(cases: List[Any]) -> None:
     mongo.db.cases.insert_many(cases)
 
 
 def count_cases() -> int:
-    return mongo.db.cases.count_documents({})
+    return int(mongo.db.cases.count_documents({}))
 
 
 def insert_contact() -> None:
@@ -44,8 +44,8 @@ def insert_random_cases(n: int) -> None:
         )
 
 
-def generate_random_cases(n: int) -> list:
-    cases: list = []
+def generate_random_cases(n: int) -> List[Any]:
+    cases: List[Any] = []
     for _ in repeat(None, n):
         cases.append(
             {
