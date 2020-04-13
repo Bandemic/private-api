@@ -1,32 +1,39 @@
-from flask import url_for
-from uuid import uuid4, UUID
-from app.persistence.db import count_cases, generate_random_cases
 import json
-from flask.testing import FlaskClient
-from flask import Response
 from datetime import datetime
+from flask import url_for, Response
+from flask.testing import FlaskClient
 
 
-def test_insert(client: FlaskClient):
-    # TODO: actually test that case is inserted
-    prev_count: int = count_cases()
-    n: int = 10
-    cases: list = generate_random_cases(n)
+def test_report_post(client: FlaskClient):
+    default_reportsig = "teststr"
+
+    data = {
+        "reportsig": default_reportsig,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
     res: Response = client.post(
-        url_for("v0.cases.report"),
-        data=json.dumps([case.__dict__ for case in cases], cls=CaseEncoder),
-        content_type="application/json",
+        url_for(".report"), data=json.dumps(data), content_type="application/json"
     )
-    assert res.status_code == 201
-    assert count_cases() == (prev_count + n)
+    assert res.status_code == 200
 
 
-# copied from https://stackoverflow.com/a/48159596/9926795
-class CaseEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, UUID):
-            # if the obj is uuid, we simply return the value of uuid
-            return obj.hex
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        return json.JSONEncoder.default(self, obj)
+def test_report_post_duplicate(client: FlaskClient):
+    duplicate_reportsig = "duplicate"
+
+    data1 = {
+        "reportsig": duplicate_reportsig,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    res1: Response = client.post(
+        url_for(".report"), data=json.dumps(data1), content_type="application/json"
+    )
+    assert res1.status_code == 200
+
+    data2 = {
+        "reportsig": duplicate_reportsig,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    res2: Response = client.post(
+        url_for(".report"), data=json.dumps(data2), content_type="application/json"
+    )
+    assert res2.status_code == 200
